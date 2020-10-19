@@ -77,10 +77,12 @@ class App extends React.Component {
   handleScroll = (e) => {
     let bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
     if(bottom){
-      this.setState({isBottom: true})
+      this.setState({isBottom: true},() => console.log(this.state.isBottom + " bottom"))
     }
     else{
-      this.setState({isBottom: false})
+      console.log(e.target.scrollHeight - e.target.scrollTop);
+      console.log(e.target.clientHeight)
+      this.setState({isBottom: false},() => console.log(this.state.isBottom + " not bottom"))
     }
 
   }
