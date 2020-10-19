@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import './Gallery.scss';
-import ImageList from "../Image/ImageList";
+import Image from "../Image";
 
 class Gallery extends React.Component {
   static propTypes = {
@@ -11,15 +11,15 @@ class Gallery extends React.Component {
 
   constructor(props) {
     super(props);
-    Array.prototype.insert = function ( index, item ) {
-      this.splice( index, 0, item );
-    };
+    this.images = [];
     this.state = {
       images: [],
       galleryWidth: this.getGalleryWidth(),
-      duplicate:0
+      page : 1,
+      total: 0
     };
   }
+
 
   getGalleryWidth(){
     try {
@@ -28,8 +28,8 @@ class Gallery extends React.Component {
       return 1000;
     }
   }
-  getImages(tag) {
-    const getImagesUrl = `services/rest/?method=flickr.photos.search&api_key=522c1f9009ca3609bcbaf08545f067ad&tags=${tag}&tag_mode=any&per_page=100&format=json&safe_search=1&nojsoncallback=1`;
+  getImages(tag,page) {
+    const getImagesUrl = `services/rest/?method=flickr.photos.search&api_key=522c1f9009ca3609bcbaf08545f067ad&tags=${tag}&tag_mode=any&per_page=100&page=${page}&format=json&safe_search=1&nojsoncallback=1`;
     const baseUrl = 'https://api.flickr.com/';
     axios({
       url: getImagesUrl,
@@ -38,46 +38,93 @@ class Gallery extends React.Component {
     })
       .then(res => res.data)
       .then(res => {
+
         if (
           res &&
           res.photos &&
           res.photos.photo &&
           res.photos.photo.length > 0
         ) {
-          this.setState({images: res.photos.photo});
+          if(this.state.images.length !== 0) {
+            this.setState(prevState => ({
+              images: [...prevState.images, ...res.photos.photo]
+
+            }));
+            this.setState({total: res.photos.total})
+          }
+          else{
+            this.setState({images: res.photos.photo})
+            this.setState({total:res.photos.total})
+
+          }
         }
-      });
+      }).catch(err=>console.log("error"));
   }
 
   componentDidMount() {
-    let arr = [ 'A', 'B', 'D', 'E' ];
-    this.getImages(this.props.tag);
+
+    const {page} = this.state
+    this.getImages(this.props.tag,page.toString());
     this.setState({
       galleryWidth: document.body.clientWidth
     });
   }
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if(prevState.page < this.state.page) {
+      if(this.state.images.length < this.state.total)
+        this.getImages(this.props.tag, this.state.page.toString());
+    }
+    if(prevProps.tag!==this.props.tag){
+      let props;
+      if(this.props.tag === ''){
+        props = 'art'
+      }
+      else{
+        props = this.props.tag;
+        this.setState({page:1})
+      }
+      this.setState({images:[]},() => this.getImages(props,this.state.page.toString()))
 
-  componentWillReceiveProps(props) {
-    this.getImages(props.tag);
+    }
+    if((prevProps.isBottom !== this.props.isBottom)&&(this.props.isBottom === true)){
+      this.nextPage();
+    }
   }
 
 
-  onDuplicate = (index,photo) => {
-    this.state.images.insert(index,photo)
-    console.log("hi")
-    this.setState({images : (this.state.images.concat(1))})
+  nextPage = () => {
+    this.setState({page:(this.state.page+1)})
+  }
+  onDuplicate =(index) =>{
+    let arr = [...this.state.images]
+     arr.splice(index,0,this.state.images[index])
+
+      this.setState({images: arr})
   }
 
+  showGallery = () => {
+
+    return (<div className='gallery-root'>
+      {this.state.images.map((dto,index) => {
+        return <Image key={index} keys={'image-' + dto.id} onDuplicate = {this.onDuplicate}index = {index} dto={dto} galleryWidth={this.state.galleryWidth}/>;
+      })}
+    </div>);
+
+
+
+  }
 
   render() {
+
     return (
-      <div className="gallery-root">
-        {this.state.images.map((dto,index) => {
-          return <ImageList  key={'image-' + dto.id} onDuplicate = {this.onDuplicate}index = {index} dto={dto} galleryWidth={this.state.galleryWidth}/>;
-        })}
+      <div className="gallery-wrapper" style={{height:'100%'}} >
+        {this.showGallery()}
       </div>
     );
   }
 }
 
 export default Gallery;
+
+
+

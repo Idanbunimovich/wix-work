@@ -3,11 +3,15 @@ import './image.scss'
 class Modal extends React.Component {
   render() {
     const { hideModal, show, children } = this.props
-    const showHideClassName = show ? "modal display-block" : "modal display-none";
+    const showHideClassName = show ? "display-block" : "display-none";
     return (
-      <div className={showHideClassName} onClick={hideModal}>
-        <section className="modal-main">
+      <div className={showHideClassName} >
+        <section className="modal-main" >
           {children}
+          <button style={{position: 'absolute',
+            top: '8px',
+            right: '16px'}}
+            onClick={hideModal}>x</button>
         </section>
       </div>
     );

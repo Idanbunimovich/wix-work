@@ -15,19 +15,13 @@ class Image extends React.Component {
     this.calcImageSize = this.calcImageSize.bind(this);
     this.state = {
       size: 200,
-      filterArray:['none','blur(5px)','contrast(200%)','grayscale(80%)','drop-shadow(16px 16px 20px red) invert(75%)','hue-rotate(90deg)'],
+      filterArray:['none','sepia(90%)','contrast(200%)','grayscale(80%)','drop-shadow(16px 16px 20px red) invert(75%)','hue-rotate(90deg)'],
       filterIndex: 0,
       isOpen:false
     };
   }
   filterImage = () => {
-    if(this.state.filterIndex < 5){
-      this.setState({filterIndex: (this.state.filterIndex + 1)})
-    }
-    else{
-      this.setState({filterIndex: 0})
-    }
-
+    this.setState({filterIndex: (Math.floor(Math.random() * 6) + 1)})
   }
   showModal = () => {
     this.setState({isOpen: true});
@@ -60,6 +54,7 @@ class Image extends React.Component {
 
   render() {
     return (
+      <div>
       <div
         className="image-root"
         style={{
@@ -75,7 +70,7 @@ class Image extends React.Component {
             className="image-icon"
             name="clone"
             title="clone"
-            onClick={this.props.onDuplicate}
+            onClick={() => this.props.onDuplicate(this.props.index)}
 
           />
           <FontAwesome
@@ -91,24 +86,27 @@ class Image extends React.Component {
             onClick={this.showModal}
           />
         </div>
-        {this.state.isOpen ===true?
-          <Modal hideModal={this.hideModal} show={this.state.isOpen} >
+
+      </div>
+
+        {this.state.isOpen === true ?
+          <Modal hideModal={this.hideModal} show={this.state.isOpen}>
             <div
               className='diviel'
               style={{
                 display: "flex",
                 backgroundImage: `url(${this.urlFromDto(this.props.dto)})`,
-                backgroundRepeat:'no-repeat',
-                width: '100%',
-                height: '100%'
+                backgroundRepeat: 'no-repeat',
+                width: '80%',
+                height: '80%'
               }}>
 
             </div>
           </Modal> : null
-
         }
-
       </div>
+
+
     );
   }
 }
