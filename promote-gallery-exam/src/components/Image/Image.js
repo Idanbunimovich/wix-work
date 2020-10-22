@@ -15,7 +15,6 @@ class Image extends React.Component {
     super(props);
     this.calcImageSize = this.calcImageSize.bind(this);
     this.className = ''
-
     this.state = {
       animation:'',
       isIntersect:false,
@@ -27,6 +26,8 @@ class Image extends React.Component {
       isLoaded:false
     };
   }
+
+
   Spinner = () => {
 
     return(
@@ -62,9 +63,13 @@ class Image extends React.Component {
       </div>
     );
   }
+
+
   filterImage = () => {
     this.setState({filterIndex: (Math.floor(Math.random() * 6) + 1)})
   }
+
+
   showModal = () => {
     this.setState({isOpen: true});
   };
@@ -82,6 +87,8 @@ class Image extends React.Component {
       size:size
     });
   }
+
+
   intersectionCallBack = (entries) =>{
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
@@ -91,6 +98,8 @@ class Image extends React.Component {
     })
 
   }
+
+
   intersect = () => {
     let img = Array.from(document.getElementsByClassName(`image-root ${this.props.index}`));
     let observer = new IntersectionObserver(this.intersectionCallBack)
@@ -100,6 +109,8 @@ class Image extends React.Component {
       observer.observe(element)
     })
   }
+
+
   componentDidMount() {
 
     this.calcImageSize();
@@ -134,6 +145,7 @@ class Image extends React.Component {
     else{
       this.className = `url(${this.urlFromDto(this.props.dto)})`
     }
+
      return (
       <div>
         {this.state.isLoaded ?
@@ -187,8 +199,6 @@ class Image extends React.Component {
           </Modal> : null
         }
       </div>
-
-
     );
   }
 }

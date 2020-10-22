@@ -47,11 +47,6 @@ class Gallery extends React.Component {
         ) {
           if(this.state.images.length !== 0) {
             this.images =[...this.images, ...res.photos.photo]
-            this.images.forEach(entry => {
-              if (entry.isIntersect === undefined) {
-                entry.isIntersect = false
-              }
-            })
             this.setState(prevState => ({
               images: [...prevState.images, ...res.photos.photo]
             }));
@@ -59,11 +54,6 @@ class Gallery extends React.Component {
           }
           else{
             this.images = [...res.photos.photo]
-            this.images.forEach(entry => {
-              if (entry.isIntersect === undefined) {
-                entry.isIntersect = false
-              }
-            })
             this.setState({images:this.images})
             this.setState({total:res.photos.total})
 
