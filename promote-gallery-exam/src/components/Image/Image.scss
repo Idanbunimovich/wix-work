@@ -9,6 +9,9 @@
 
 
 
+
+
+
   > .buttons {
     visibility: hidden;
     background: rgba(0, 0, 0, 0.7);
@@ -49,6 +52,10 @@
     }
   }
 }
+@keyframes fadeIn {
+  0% {opacity:0;}
+  100% {opacity:1;}
+}
 
 .modal-main {
   display: flex;
@@ -66,8 +73,16 @@
 .diviel{
   background-position: center center;
   background-size: contain;
+  animation: createBox .25s;
 }
-
+@keyframes createBox {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
 .display-block {
   display: flex;
 

@@ -8,7 +8,7 @@ import './App/App.scss'
 class AppComponent extends React.Component {
   render() {
     return (
-      <div className="index" onScroll={console.log("scroll222")}>
+      <div className="index" >
         <App/>
       </div>
     );

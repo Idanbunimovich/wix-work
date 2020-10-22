@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.scss';
 import Gallery from '../Gallery';
-import LazyLoad from "react-lazyload";
+import FontAwesome from "react-fontawesome";
 
 class App extends React.Component {
   static propTypes = {
@@ -12,58 +12,38 @@ class App extends React.Component {
     this.searchText2 = '';
     this.timeout =  0;
     this.state = {
+      isScrolled:false,
       isBottom:false,
-      tag: 'art'
+      tag: 'art',
+      searchBox:'',
+      isFilter:false,
+      className:'image-icon'
     };
 
   }
 
-
-
-  Spinner = () => {
-    console.log("success")
-    return(
-    <div className="post loading">
-      <svg
-        width="80"
-        height="80"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="xMidYMid"
-      >
-        <circle
-          cx="50"
-          cy="50"
-          fill="none"
-          stroke="#49d1e0"
-          strokeWidth="10"
-          r="35"
-          strokeDasharray="164.93361431346415 56.97787143782138"
-          transform="rotate(275.845 50 50)"
-        >
-          <animateTransform
-            attributeName="transform"
-            type="rotate"
-            calcMode="linear"
-            values="0 50 50;360 50 50"
-            keyTimes="0;1"
-            dur="1s"
-            begin="0s"
-            repeatCount="indefinite"
-          />
-        </circle>
-      </svg>
-    </div>
-    );
+  filterImages = () => {
+    if(this.state.isFilter) {
+      this.setState({isFilter:false})
+      this.setState({className: 'image-icon'})
+    }
+    else {
+      this.setState({isFilter:true})
+      this.setState({className: 'image-icon2'})
+    }
   }
-
 
   debounce = (e) => {
     e.persist()
-    if(e.target.id == '1')
-    this.searchText = e.target.value
+    if(e.target.id == '1') {
+      this.searchText = e.target.value
+    }
+    else if(e.target.id == '2') {
+      this.searchText2 = e.target.value
+    }
     else{
+       this.handleScroll(e);
 
-      this.handleScroll(e);
     }
     if(this.timeout) {
       clearTimeout(this.timeout);
@@ -72,17 +52,22 @@ class App extends React.Component {
       if(e.target.id == '1'){
         this.setState({tag: this.searchText})
       }
+      else if(e.target.id == '2'){
+        this.setState({searchBox: this.searchText2})
+      }
+
       }, 500);
   }
   handleScroll = (e) => {
-    let bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
-    if(bottom){
-      this.setState({isBottom: true},() => console.log(this.state.isBottom + " bottom"))
-    }
+    let bottom = e.target.scrollHeight - e.target.scrollTop -400 < e.target.clientHeight;
+        if(bottom) {
+          this.setState({isScrolled:(!this.state.isScrolled)})
+          this.setState({isBottom: true})
+        }
+
     else{
-      console.log(e.target.scrollHeight - e.target.scrollTop);
-      console.log(e.target.clientHeight)
-      this.setState({isBottom: false},() => console.log(this.state.isBottom + " not bottom"))
+      this.setState({isScrolled:(!this.state.isScrolled)})
+      this.setState({isBottom: false})
     }
 
   }
@@ -91,14 +76,36 @@ class App extends React.Component {
 
   render() {
     return (
-      <div className="app-root" id = '2' onScroll={e=>this.debounce(e)}>
+      <div className="app-root" onScroll={e=>this.debounce(e)}>
         <div className="app-header">
           <h2>Flickr Gallery</h2>
-          <input id = '1' className="app-input" style={{marginRight:'10px'}}onClick={this.filterImage}  onChange={e => this.debounce(e)} />
+          <div>
+          <input id = '1'
+                 className="app-input"
+                 style={{marginRight:'10px'}}
+                 disabled = {(this.state.isFilter)? "disabled" : ""}
+                 onChange={e => this.debounce(e)} />
+            <FontAwesome
+              className={this.state.className}
+              name="filter"
+              title="filter"
+              onClick={this.filterImages}
+            />
+          </div>
+          {this.state.isFilter===true?
+            <div>
+            <p>search existing photos</p>
+            <input
+              id = '2'
+              className="app-input2"
+              onChange={e => this.debounce(e)} />
+            </div>
+            : null
+          }
         </div>
-        <LazyLoad placeholder={this.Spinner()}>
-        <Gallery isBottom={this.state.isBottom} tag={this.state.tag}/>
-        </LazyLoad>
+
+        <Gallery isScrolled={this.state.isScrolled} isBottom={this.state.isBottom} searchBox={this.state.searchBox} tag={this.state.tag}/>
+
       </div>
     );
   }
