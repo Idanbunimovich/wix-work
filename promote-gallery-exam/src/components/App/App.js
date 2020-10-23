@@ -33,7 +33,12 @@ class App extends React.Component {
     }
   }
 
-  debounce = (e) => {
+  wrappingFunc =(e,func) =>{
+    this.insideFunc(e)
+    this.debounce(func,500)(e)
+  }
+
+  insideFunc = (e) => {
     e.persist()
     if(e.target.id == '1') {
       this.searchText = e.target.value
@@ -42,22 +47,26 @@ class App extends React.Component {
       this.searchText2 = e.target.value
     }
     else{
-       this.handleScroll(e);
-
+      this.handleScroll(e)
     }
-    if(this.timeout) {
-      clearTimeout(this.timeout);
-    }
-    this.timeout = setTimeout(() => {
-      if(e.target.id == '1'){
-        this.setState({tag: this.searchText})
-      }
-      else if(e.target.id == '2'){
-        this.setState({searchBox: this.searchText2})
-      }
-
-      }, 500);
   }
+
+   debounce = (func, wait) => {
+    let context = this
+     return function (...args) {
+       clearTimeout(context.timeout)
+       context.timeout = setTimeout(() => func.apply(this, args), wait)
+     }
+   }
+   handleChange1 = () => {
+     this.setState({tag: this.searchText})
+   }
+  handleChange2 = () => {
+    this.setState({searchBox: this.searchText2})
+  }
+
+
+
   handleScroll = (e) => {
     let bottom = e.target.scrollHeight - e.target.scrollTop -400 < e.target.clientHeight;
         if(bottom) {
@@ -76,7 +85,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <div className="app-root" onScroll={e=>this.debounce(e)}>
+      <div className="app-root" onScroll={e=>this.wrappingFunc(e,this.handleScroll)}>
         <div className="app-header">
           <h2>Flickr Gallery</h2>
           <div>
@@ -84,7 +93,7 @@ class App extends React.Component {
                  className="app-input"
                  style={{marginRight:'10px'}}
                  disabled = {(this.state.isFilter)? "disabled" : ""}
-                 onChange={e => this.debounce(e)} />
+                 onChange={e => this.wrappingFunc(e,this.handleChange1)} />
             <FontAwesome
               className={this.state.className}
               name="filter"
@@ -98,7 +107,7 @@ class App extends React.Component {
             <input
               id = '2'
               className="app-input2"
-              onChange={e => this.debounce(e)} />
+              onChange={e => this.wrappingFunc(e,this.handleChange2)} />
             </div>
             : null
           }

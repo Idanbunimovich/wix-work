@@ -93,7 +93,7 @@ class Image extends React.Component {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         this.setState({isIntersect:true})
-        this.setState({animation:'fadeIn ease 10s'})
+        this.setState({animation:'fadeIn ease 3s'})
       }
     })
 
