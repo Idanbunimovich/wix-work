@@ -3,6 +3,14 @@ import PropTypes from 'prop-types';
 import FontAwesome from 'react-fontawesome';
 import './Image.scss';
 import Modal from "./Modal";
+import { connect } from 'react-redux';
+
+const mapStateToProps = (state) => {
+  return {
+    isScrolled: state.scrollApp.isScrolled
+  }
+}
+
 
 
 class Image extends React.Component {
@@ -202,5 +210,5 @@ class Image extends React.Component {
     );
   }
 }
+export default connect(mapStateToProps)(Image)
 
-export default Image;

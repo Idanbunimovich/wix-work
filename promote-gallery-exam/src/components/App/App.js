@@ -2,7 +2,23 @@ import React from 'react';
 import './App.scss';
 import Gallery from '../Gallery';
 import FontAwesome from "react-fontawesome";
+import {setScroll} from '../Actions';
+import { connect } from 'react-redux';
+import {scrollApp} from "../Reducers";
 
+const mapStateToProps = (state) => {
+   return {
+    isScrolled: state.scrollApp.isScrolled
+  }
+}
+
+// dispatch the DOM changes to call an action. note mapStateToProps returns object, mapDispatchToProps returns function
+// the function returns an object then uses connect to change the data from redecers.
+const mapDispatchToProps = (dispatch) => {
+    return {
+    onScrollChange: (isScrolled) => dispatch(setScroll(!isScrolled))
+  }
+}
 class App extends React.Component {
   static propTypes = {
   };
@@ -12,7 +28,6 @@ class App extends React.Component {
     this.searchText2 = '';
     this.timeout =  0;
     this.state = {
-      isScrolled:false,
       isBottom:false,
       tag: 'art',
       searchBox:'',
@@ -21,6 +36,7 @@ class App extends React.Component {
     };
 
   }
+
 
   filterImages = () => {
     if(this.state.isFilter) {
@@ -70,12 +86,12 @@ class App extends React.Component {
   handleScroll = (e) => {
     let bottom = e.target.scrollHeight - e.target.scrollTop -400 < e.target.clientHeight;
         if(bottom) {
-          this.setState({isScrolled:(!this.state.isScrolled)})
+          this.props.onScrollChange(this.props.isScrolled)
           this.setState({isBottom: true})
         }
 
     else{
-      this.setState({isScrolled:(!this.state.isScrolled)})
+      this.props.onScrollChange(this.props.isScrolled)
       this.setState({isBottom: false})
     }
 
@@ -113,11 +129,11 @@ class App extends React.Component {
           }
         </div>
 
-        <Gallery isScrolled={this.state.isScrolled} isBottom={this.state.isBottom} searchBox={this.state.searchBox} tag={this.state.tag}/>
+        <Gallery isBottom={this.state.isBottom} searchBox={this.state.searchBox} tag={this.state.tag}/>
 
       </div>
     );
   }
 }
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App)

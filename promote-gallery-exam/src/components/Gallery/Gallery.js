@@ -124,7 +124,6 @@ class Gallery extends React.Component {
     return (<div className='gallery-root'>
       {this.state.images.map((dto,index) => {
         return <Image key={index}
-                      isScrolled={this.props.isScrolled}
                       keys={'image-' + dto.id} page={this.state.page}
                       onDuplicate = {this.onDuplicate}
                       index = {index}

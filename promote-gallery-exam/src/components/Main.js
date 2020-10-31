@@ -8,8 +8,8 @@ import './App/App.scss'
 class AppComponent extends React.Component {
   render() {
     return (
-      <div className="index" >
-        <App/>
+      <div className='index'>
+      <App/>
       </div>
     );
   }

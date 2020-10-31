@@ -82,7 +82,11 @@
     "react-dom": "^15.0.0",
     "react-fontawesome": "^1.6.1",
     "react-infinite-scroll-component": "^5.1.0",
-    "react-lazyload": "^3.0.0"
+    "react-lazyload": "^3.0.0",
+    "react-redux": "^5.1.2",
+    "redux": "^4.0.5",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.3.0"
   },
   "gh-pages-deploy": {
     "staticpath": "dist",
